@@ -1,1 +1,3 @@
 # codekata
+
+various code katas
