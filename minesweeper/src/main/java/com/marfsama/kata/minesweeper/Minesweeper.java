@@ -1,6 +1,5 @@
 package com.marfsama.kata.minesweeper;
 
-
 /**
  * Mine Sweeper Kata
  */

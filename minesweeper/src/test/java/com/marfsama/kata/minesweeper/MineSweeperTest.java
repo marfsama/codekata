@@ -1,8 +1,9 @@
 package com.marfsama.kata.minesweeper;
 
+import com.marfsama.kata.minesweeper.Minesweeper;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /** UnitTest für {@link Minesweeper}.  */
 public class MineSweeperTest {

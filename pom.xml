@@ -2,7 +2,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.marf</groupId>
     <artifactId>codekata</artifactId>
+    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
+    <modules>
+        <module>minesweeper</module>
+        <module>wordwrap</module>
+    </modules>
     <name>Code Kata</name>
 
     <properties>
