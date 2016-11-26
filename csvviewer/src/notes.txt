@@ -1,0 +1,3 @@
+[x] read csv file and print them
+[x] respect headers
+
