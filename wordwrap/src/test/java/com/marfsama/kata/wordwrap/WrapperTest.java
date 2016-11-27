@@ -60,3 +60,4 @@ public class WrapperTest {
         Wrapper wrapper = new Wrapper();
         assertEquals("a\nkatze", wrapper.wrap("a    katze", 5));
     }
+}

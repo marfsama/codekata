@@ -1,7 +1,6 @@
-package com.marf.csvviewer.com.marf.csvvieweer;
+package com.marf.csvviewer;
 
 
-import com.marf.csvviewer.CsvReader;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -119,5 +118,37 @@ public class CsvReaderTest {
         assertThat(csvReader.page(0,2))
                 .contains("1234  |1234  |1234  ")
                 .hasLineCount(4);
+    }
+
+    @Test
+    public void headerShouldHaveNoColumn() throws IOException {
+        CsvReader csvReader = new CsvReader();
+        csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890");
+        assertThat(csvReader.page(0,2))
+                .contains("No.");
+    }
+
+    @Test
+    public void noColumnShouldStartWithOne() throws IOException {
+        CsvReader csvReader = new CsvReader();
+        csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890");
+        assertThat(csvReader.page(0,1))
+                .contains("1.");
+    }
+
+    @Test
+    public void noColumnShouldBeConsecutive() throws IOException {
+        CsvReader csvReader = new CsvReader();
+        csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890");
+        assertThat(csvReader.page(0,2))
+                .contains("2.");
+    }
+
+    @Test
+    public void noColumnShouldAbsoluteInPage() throws IOException {
+        CsvReader csvReader = new CsvReader();
+        csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890");
+        assertThat(csvReader.page(1,2))
+                .contains("3.");
     }
 }

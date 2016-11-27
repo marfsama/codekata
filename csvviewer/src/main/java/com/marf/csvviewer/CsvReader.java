@@ -11,7 +11,7 @@ import java.util.List;
 public class CsvReader {
 
     private List<String> headers;
-    private List<String[]> lines;
+    private List<List<String>> lines;
 
     public void read(String content) throws IOException {
         read(new StringReader(content));
@@ -22,29 +22,35 @@ public class CsvReader {
             throw new IllegalArgumentException("file may not be empty");
 
         BufferedReader reader = new BufferedReader(file);
+
+        headers = new ArrayList<>();
+        headers.add("No.");
         String headerLine = reader.readLine();
         if (headerLine == null)
             throw new IllegalArgumentException("file may not be empty");
 
-        this.headers = Arrays.asList(headerLine.trim().split(";"));
+        this.headers.addAll(Arrays.asList(headerLine.trim().split(";")));
 
         this.lines = new ArrayList<>();
         String dataLine = reader.readLine();
         while (dataLine != null) {
-            this.lines.add(dataLine.trim().split(";"));
+            List<String> dataValues = new ArrayList<>();
+            dataValues.add((lines.size()+1)+".");
+            dataValues.addAll(Arrays.asList(dataLine.trim().split(";")));
+            this.lines.add(dataValues);
             dataLine = reader.readLine();
         }
     }
 
-    private int[] getColumnLength(List<String[]> lines) {
+    private int[] getColumnLength(List<List<String>> lines) {
         int[] length = new int[headers.size()];
         for (int i = 0; i < headers.size(); i++) {
             length[i] = headers.get(i).length();
         }
 
-        for (String[] line : lines) {
-            for (int i = 0; i < line.length; i++) {
-                length[i] = Math.max(length[i], line[i].length());
+        for (List<String> line : lines) {
+            for (int i = 0; i < line.size(); i++) {
+                length[i] = Math.max(length[i], line.get(i).length());
             }
         }
         return length;
@@ -54,26 +60,21 @@ public class CsvReader {
         return source.length() >= length ? source : fill(source+filler, length, filler);
     }
 
-    @Override
-    public String toString() {
-        return page(0, Integer.MAX_VALUE);
-    }
-
-    private StringBuilder linesToString(int[] length, List<String[]> lines) {
+    private StringBuilder linesToString(int[] length, List<List<String>> lines) {
         StringBuilder linesBuilder = new StringBuilder();
-        for (String[] line : lines) {
+        for (List<String> line : lines) {
             linesBuilder.append(lineToString(length, line));
         }
         return linesBuilder;
     }
 
-    private String lineToString(int[] length, String[] line) {
+    private String lineToString(int[] length, List<String> line) {
         StringBuilder lineBuilder = new StringBuilder();
-        for (int i = 0; i < line.length; i++) {
+        for (int i = 0; i < line.size(); i++) {
             if (i != 0) {
                 lineBuilder.append("|");
             }
-            lineBuilder.append(fill(line[i], length[i], " "));
+            lineBuilder.append(fill(line.get(i), length[i], " "));
         }
         lineBuilder.append("\n");
         return lineBuilder.toString();
@@ -106,7 +107,7 @@ public class CsvReader {
     public String page(int pageNum, int pageSize) {
         int firstIndex = Math.min(pageSize * pageNum, lines.size());
         int lastIndex = Math.min(pageSize * (pageNum + 1), lines.size());
-        List<String[]> lines = this.lines.subList(firstIndex, lastIndex);
+        List<List<String>> lines = this.lines.subList(firstIndex, lastIndex);
 
         int[] length = getColumnLength(lines);
         return headerToString(length)+
@@ -114,39 +115,12 @@ public class CsvReader {
                 linesToString(length, lines);
     }
 
-    public int lastPageNum(int pageSize) {
-        return lines.size() / pageSize;
+    public int getSize() {
+        return lines.size();
     }
 
-    public static void main(String[] params) throws IOException {
-        int pageSize = 3;
-        int page = 0;
-        String file = "sampledata.txt";
-
-        CsvReader reader = new CsvReader();
-        reader.read(new InputStreamReader(CsvReader.class.getResourceAsStream("/"+file)));
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-
-        while (true) {
-            System.out.println(reader.page(page, pageSize));
-            System.out.println("N(ext page, P(revious page, F(irst page, L(ast page, eX(it");
-            String command = input.readLine();
-            switch (command) {
-                case "x": System.exit(0);
-                case "n":
-                    page = Math.min(reader.lastPageNum(pageSize), page+1);;
-                    break;
-                case "p":
-                    page = Math.max(0, page-1);
-                    break;
-                case "f":
-                    page = 0;
-                    break;
-                case "l":
-                    page = reader.lastPageNum(pageSize);
-                    break;
-            }
-        }
-
+    @Override
+    public String toString() {
+        return page(0, Integer.MAX_VALUE);
     }
 }
