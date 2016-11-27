@@ -87,7 +87,7 @@ public class CsvViewer {
                     break;
                 case "j":
                     System.out.print("page: ");
-                    int page = Integer.valueOf(input.readLine());
+                    int page = Integer.valueOf(input.readLine())-1;
                     viewer.setPage(page);
                     break;
             }

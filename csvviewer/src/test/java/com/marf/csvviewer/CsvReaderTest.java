@@ -41,14 +41,14 @@ public class CsvReaderTest {
     public void firstLineShouldBeRead() throws IOException {
         CsvReader csvReader = new CsvReader();
         csvReader.read("Name;Age;City\n" +"Peter;42;NewYork");
-        assertThat(csvReader.toString()).contains("Peter","42","NewYork").hasLineCount(3);
+        assertThat(csvReader.toString()).contains("Peter","42","NewYork");
     }
 
     @Test
     public void secondLineShouldBeRead() throws IOException {
         CsvReader csvReader = new CsvReader();
         csvReader.read("Name;Age;City\nPeter;42;NewYork\nPaul;57;London");
-        assertThat(csvReader.toString()).contains("Paul","42","NewYork").hasLineCount(4);
+        assertThat(csvReader.toString()).contains("Paul","42","NewYork");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CsvReaderTest {
         CsvReader csvReader = new CsvReader();
         csvReader.read("col1;col2;col3\n1a;1b;1c\n2a;2b;2c\n3a;3b;3c\n4a;4b;4c");
         assertThat(csvReader.page(0,1))
-                .contains("1a","1b","1c").hasLineCount(3);
+                .contains("1a","1b","1c").hasLineCount(4);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class CsvReaderTest {
         assertThat(csvReader.page(0,2))
                 .contains("1a","1b","1c")
                 .contains("2a","2b","2c")
-                .hasLineCount(4);
+                .hasLineCount(5);
     }
 
     @Test
@@ -98,8 +98,7 @@ public class CsvReaderTest {
         csvReader.read("col1;col2;col3\n1a;1b;1c\n2a;2b;2c\n3a;3b;3c\n4a;4b;4c");
         assertThat(csvReader.page(1,2))
                 .contains("3a","3b","3c")
-                .contains("4a","4b","4c")
-                .hasLineCount(4);
+                .contains("4a","4b","4c");
     }
 
     @Test
@@ -108,7 +107,7 @@ public class CsvReaderTest {
         csvReader.read("col1;col2;col3\n1a;1b;1c\n2a;2b;2c\n3a;3b;3c\n4a;4b;4c");
         assertThat(csvReader.page(1,3))
                 .contains("4a","4b","4c")
-                .hasLineCount(3);
+                .hasLineCount(4);
     }
 
     @Test
@@ -116,8 +115,7 @@ public class CsvReaderTest {
         CsvReader csvReader = new CsvReader();
         csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890");
         assertThat(csvReader.page(0,2))
-                .contains("1234  |1234  |1234  ")
-                .hasLineCount(4);
+                .contains("1234  |1234  |1234  ");
     }
 
     @Test
@@ -150,5 +148,21 @@ public class CsvReaderTest {
         csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890");
         assertThat(csvReader.page(1,2))
                 .contains("3.");
+    }
+
+    @Test
+    public void currentPageAndMaxPageShouldBeShown() throws IOException {
+        CsvReader csvReader = new CsvReader();
+        csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890");
+        assertThat(csvReader.page(0,2))
+                .contains("Page 1 of 2");
+    }
+
+    @Test
+    public void incompleteLastPageShouldBeCountedTowardsMaxPage() throws IOException {
+        CsvReader csvReader = new CsvReader();
+        csvReader.read("col1;col2;col3\n1234;1234;1234\n123456;123456;123456\n12345678;12345678;12345678\n1234567890;1234567890;1234567890\n1;2;3");
+        assertThat(csvReader.page(0,2))
+                .contains("Page 1 of 3");
     }
 }

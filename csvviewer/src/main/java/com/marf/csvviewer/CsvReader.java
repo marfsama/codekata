@@ -104,15 +104,21 @@ public class CsvReader {
         return header.toString();
     }
 
+    private String footerToString(int pageNum, int pageSize, List<List<String>> lines, int[] length) {
+        return linesToString(length, lines) + "Page " + (pageNum + 1) + " of " +
+                ((getSize() / pageSize) + (getSize() % pageSize > 0 ? 1 : 0))
+                + "\n";
+    }
+
     public String page(int pageNum, int pageSize) {
         int firstIndex = Math.min(pageSize * pageNum, lines.size());
         int lastIndex = Math.min(pageSize * (pageNum + 1), lines.size());
         List<List<String>> lines = this.lines.subList(firstIndex, lastIndex);
 
         int[] length = getColumnLength(lines);
-        return headerToString(length)+
-                headerLineToString(length)+
-                linesToString(length, lines);
+        return headerToString(length) +
+                headerLineToString(length) +
+                footerToString(pageNum, pageSize, lines, length);
     }
 
     public int getSize() {
